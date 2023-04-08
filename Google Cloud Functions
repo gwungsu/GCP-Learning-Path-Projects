@@ -1,0 +1,25 @@
+// Function to handle barcode scanning and look up product info
+exports.getProductByBarcode = async (req, res) => {
+  const barcode = req.body.barcode;
+  const product = await lookupProductByBarcode(barcode);
+  
+  if (product) {
+    res.status(200).json(product);
+  } else {
+    res.status(404).send('Product not found');
+  }
+};
+
+// Function to look up product info in Google Cloud Datastore
+async function lookupProductByBarcode(barcode) {
+  const query = datastore.createQuery('Product')
+    .filter('barcode', '=', barcode);
+  
+  const results = await datastore.runQuery(query);
+  
+  if (results[0].length > 0) {
+    return results[0][0];
+  } else {
+    return null;
+  }
+}
