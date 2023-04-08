@@ -1,0 +1,24 @@
+// Function to upload product images to Google Cloud Storage
+exports.uploadProductImage = async (req, res) => {
+  const file = req.file;
+  const productId = req.body.productId;
+  
+  const bucketName = 'my-product-images';
+  const bucket = storage.bucket(bucketName);
+  
+  const fileName = `${productId}-${file.originalname}`;
+  const fileOptions = { metadata: { contentType: file.mimetype } };
+  const fileStream = bucket.file(fileName).createWriteStream(fileOptions);
+  
+  fileStream.on('error', err => {
+    console.error(`Error uploading product image: ${err}`);
+    res.status(500).send('Error uploading product image');
+  });
+  
+  fileStream.on('finish', () => {
+    const imageUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+    res.status(200).json({ imageUrl });
+  });
+  
+  fileStream.end(file.buffer);
+};
