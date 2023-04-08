@@ -1,0 +1,59 @@
+swagger: '2.0'
+info:
+  title: Supplier API
+  description: API for managing suppliers
+  version: 1.0.0
+basePath: /v1
+schemes:
+  - https
+paths:
+  /suppliers:
+    get:
+      summary: List all suppliers
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Add a new supplier
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: supplier
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: The name of the supplier
+              email:
+                type: string
+                format: email
+                description: The email address of the supplier
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+    /suppliers/{supplierId}:
+    get:
+      summary: Get a specific supplier
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: supplierId
+          type: integer
+          description: The ID of the supplier to retrieve
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not found
